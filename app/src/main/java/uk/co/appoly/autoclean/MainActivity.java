@@ -3,9 +3,7 @@ package uk.co.appoly.autoclean;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         submitButton.setOnClickListener((v) -> {
 
-            if (Database.Login(email.getText().toString(), password.getText().toString())) {
+            if (LoginDatabase.Login(email.getText().toString(), password.getText().toString())) {
                 //Move to new activity
 
                 Intent TaskIntent = new Intent(this, LoggedInActivity.class);
