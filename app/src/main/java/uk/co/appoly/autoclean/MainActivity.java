@@ -3,6 +3,7 @@ package uk.co.appoly.autoclean;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.widget.Button;
@@ -31,12 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent TaskIntent = new Intent(this, LoggedInActivity.class);
                 startActivity(TaskIntent);
+                finish();
 
             } else {
                 Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
                 password.setText("");
             }
-
 
         });
 
