@@ -64,6 +64,13 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
 
     @Override
     public void onItemClick(View view, int position) {
-        returningServices.add(serviceTypes.get(position).title);
+
+        if (!returningServices.contains(serviceTypes.get(position).title)) {
+            returningServices.add(serviceTypes.get(position).title);
+        } else {
+            returningServices.remove(serviceTypes.get(position).title);
+        }
+
+        Log.v("Debug", returningServices.toString());
     }
 }

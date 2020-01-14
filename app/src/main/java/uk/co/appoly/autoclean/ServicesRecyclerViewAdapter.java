@@ -1,6 +1,7 @@
 package uk.co.appoly.autoclean;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
         holder.myTime.setText(mServiceTypes.get(position).time);
         holder.myPrice.setText("£" + String.valueOf(mServiceTypes.get(position).price));
         holder.myImageView.setImageResource(mServiceTypes.get(position).imageResource);
+
     }
 
     @Override
@@ -46,12 +48,16 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        boolean isSelected = false;
+
         TextView myTitle, myTime, myPrice;
         ImageView myImageView;
 
         public ViewHolder(View itemView, Context mContext) {
             super(itemView);
             itemView.setOnClickListener(this);
+
             myImageView = itemView.findViewById(R.id.imageView);
             myTitle = itemView.findViewById(R.id.title);
             myTime = itemView.findViewById(R.id.time);
@@ -61,6 +67,13 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
         @Override
         public void onClick(View v) {
             if (clickListener != null) clickListener.onItemClick(v, getAdapterPosition());
+
+            if (isSelected) {
+                v.setBackgroundColor(Color.WHITE);
+            } else {
+                v.setBackgroundColor(Color.GREEN);
+            }
+            isSelected = !isSelected;
         }
     }
 
