@@ -1,8 +1,11 @@
 package uk.co.appoly.autoclean;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -14,6 +17,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class DataCollectionActivity extends AppCompatActivity {
+
+    private final int GET_SERVICE_REQUEST = 5000;
 
     private Spinner timeSlotsSpinner;
 
@@ -27,6 +32,7 @@ public class DataCollectionActivity extends AppCompatActivity {
     private Switch powerSwitch;
 
     private Button bookButton;
+    private Button servicesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         powerSwitch = findViewById(R.id.powerSwitch);
 
         bookButton = findViewById(R.id.bookButton);
+        servicesButton = findViewById(R.id.servicesButton);
 
         bookButton.setOnClickListener((v) -> {
 
@@ -75,5 +82,21 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         });
 
+        servicesButton.setOnClickListener((v) -> {
+
+            Intent taskIntent = new Intent(this, ServiceSelectionActivity.class);
+            startActivityForResult(taskIntent, GET_SERVICE_REQUEST);
+
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == GET_SERVICE_REQUEST) {
+                Log.v("Debug", "Returned date: " + data.getStringExtra(ServiceSelectionActivity.SERVICE_TITLE));
+            }
+        }
     }
 }

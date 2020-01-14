@@ -126,18 +126,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/postcodeEditText" />
 
-            <Spinner
-                android:id="@+id/spinner2"
+            <Button
+                android:id="@+id/servicesButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
-                android:background="@android:drawable/btn_dropdown"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner1" />
+                app:layout_constraintTop_toBottomOf="@+id/spinner1"
+                android:text="Services"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -146,7 +146,7 @@
                 android:layout_marginTop="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner2">
+                app:layout_constraintTop_toBottomOf="@+id/servicesButton">
 
                 <Switch
                     android:id="@+id/waterSwitch"
@@ -180,7 +180,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                android:background="@drawable/round_shape"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#CC004E"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

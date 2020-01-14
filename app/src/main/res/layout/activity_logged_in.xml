@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="#807B7B"
-    tools:context=".LoggedInActivity">
+    tools:context=".DateSelectActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bannerTextView"
