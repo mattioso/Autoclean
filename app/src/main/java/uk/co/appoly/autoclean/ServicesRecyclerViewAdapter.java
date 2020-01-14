@@ -39,6 +39,9 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
         holder.myTime.setText(mServiceTypes.get(position).time);
         holder.myPrice.setText("£" + String.valueOf(mServiceTypes.get(position).price));
         holder.myImageView.setImageResource(mServiceTypes.get(position).imageResource);
+        if(mServiceTypes.get(position).pressed) {
+            holder.itemView.setBackgroundColor(Color.GREEN);
+        }
 
     }
 

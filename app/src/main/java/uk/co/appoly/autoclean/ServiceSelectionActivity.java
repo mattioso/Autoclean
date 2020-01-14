@@ -68,7 +68,7 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
         if (!returningServices.contains(serviceTypes.get(position).id)) {
             returningServices.add(serviceTypes.get(position).id);
         } else {
-            returningServices.remove(serviceTypes.get(position).id);
+            returningServices.remove(returningServices.indexOf(serviceTypes.get(position).id));
         }
 
         Log.v("Debug", returningServices.toString());
