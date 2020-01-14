@@ -13,6 +13,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -95,7 +96,19 @@ public class DataCollectionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == GET_SERVICE_REQUEST) {
-                Log.v("Debug", "Returned date: " + data.getStringExtra(ServiceSelectionActivity.SERVICE_TITLE));
+
+                try {
+                    ArrayList<String> returnedServices = data.getBundleExtra(ServiceSelectionActivity.SERVICE_BUNDLE).getStringArrayList(ServiceSelectionActivity.SERVICES);
+
+                    if (returnedServices == null) return;
+
+                    for (String s : returnedServices) {
+                        Log.v("Debug Test", s);
+                    }
+                } catch (NullPointerException e) {
+                    Log.v("Debug", "No services returned");
+                }
+
             }
         }
     }
