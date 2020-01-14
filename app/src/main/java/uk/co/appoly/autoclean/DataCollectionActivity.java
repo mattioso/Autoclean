@@ -3,6 +3,7 @@ package uk.co.appoly.autoclean;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.IntArrayEvaluator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -98,12 +99,12 @@ public class DataCollectionActivity extends AppCompatActivity {
             if (requestCode == GET_SERVICE_REQUEST) {
 
                 try {
-                    ArrayList<String> returnedServices = data.getBundleExtra(ServiceSelectionActivity.SERVICE_BUNDLE).getStringArrayList(ServiceSelectionActivity.SERVICES);
+                    ArrayList<Integer> returnedServices = data.getBundleExtra(ServiceSelectionActivity.SERVICE_BUNDLE).getIntegerArrayList(ServiceSelectionActivity.SERVICES);
 
                     if (returnedServices == null) return;
 
-                    for (String s : returnedServices) {
-                        Log.v("Debug Test", s);
+                    for (int s : returnedServices) {
+                        Log.v("Debug Test", "ID: " + s);
                     }
                 } catch (NullPointerException e) {
                     Log.v("Debug", "No services returned");

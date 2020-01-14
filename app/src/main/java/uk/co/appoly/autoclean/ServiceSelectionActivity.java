@@ -25,7 +25,7 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
     public static String SERVICE_BUNDLE = "SERVICE_BUNDLE";
     public static String SERVICES = "SERVICES";
 
-    public ArrayList<String> returningServices = new ArrayList<>();
+    public ArrayList<Integer> returningServices = new ArrayList<>();
 
     private Button returnButton;
 
@@ -51,7 +51,7 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
         returnButton.setOnClickListener((v) -> {
 
             Bundle extra = new Bundle();
-            extra.putStringArrayList(SERVICES, returningServices);
+            extra.putIntegerArrayList(SERVICES, returningServices);
 
             Intent resultData = new Intent();
             resultData.putExtra(SERVICE_BUNDLE, extra);
@@ -65,10 +65,10 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
     @Override
     public void onItemClick(View view, int position) {
 
-        if (!returningServices.contains(serviceTypes.get(position).title)) {
-            returningServices.add(serviceTypes.get(position).title);
+        if (!returningServices.contains(serviceTypes.get(position).id)) {
+            returningServices.add(serviceTypes.get(position).id);
         } else {
-            returningServices.remove(serviceTypes.get(position).title);
+            returningServices.remove(serviceTypes.get(position).id);
         }
 
         Log.v("Debug", returningServices.toString());

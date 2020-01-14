@@ -58,6 +58,8 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
             super(itemView);
             itemView.setOnClickListener(this);
 
+
+
             myImageView = itemView.findViewById(R.id.imageView);
             myTitle = itemView.findViewById(R.id.title);
             myTime = itemView.findViewById(R.id.time);
