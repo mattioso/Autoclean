@@ -5,9 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -16,9 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
 public class DataCollectionActivity extends AppCompatActivity {
 
@@ -26,11 +29,11 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private Spinner timeSlotsSpinner;
 
-    private TextView nameTextView;
-    private TextView houseTextView;
-    private TextView streetTextView;
-    private TextView townTextView;
-    private TextView postCodeTextView;
+    private TextView nameEditText;
+    private TextView houseEditText;
+    private TextView streetEditText;
+    private TextView townEditText;
+    private TextView postEditText;
 
     private Switch waterSwitch;
     private Switch powerSwitch;
@@ -44,6 +47,15 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private RecyclerView displayServices;
     private RecyclerView.Adapter mAdapter;
+
+    private String formName;
+    private String formAddressLine1;
+    private String formAddressLine2;
+    private String formTown;
+    private String formPostcode;
+    private String formTimeSlot;
+    private Boolean waterSupply;
+    private Boolean powerSupply;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +74,17 @@ public class DataCollectionActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, timeSlots);
         timeSlotsSpinner.setAdapter(adapter);
 
-        nameTextView = findViewById(R.id.nameEditText);
-        houseTextView = findViewById(R.id.addressOneEditText);
-        streetTextView = findViewById(R.id.addressTwoEditText);
-        townTextView = findViewById(R.id.townEditText);
-        postCodeTextView = findViewById(R.id.postcodeEditText);
+        nameEditText = findViewById(R.id.nameEditText);
+        houseEditText = findViewById(R.id.addressOneEditText);
+        streetEditText = findViewById(R.id.addressTwoEditText);
+        townEditText = findViewById(R.id.townEditText);
+        postEditText = findViewById(R.id.postcodeEditText);
+
+        colourReset(nameEditText);
+        colourReset(houseEditText);
+        colourReset(streetEditText);
+        colourReset(townEditText);
+        colourReset(postEditText);
 
         waterSwitch = findViewById(R.id.waterSwitch);
         powerSwitch = findViewById(R.id.powerSwitch);
@@ -76,28 +94,17 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         displayServices = findViewById(R.id.servicesRecyclerView);
         displayServices.hasFixedSize();
-        displayServices.setLayoutManager(new LinearLayoutManager(this));
+        displayServices.setLayoutManager(new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
 
         mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
         displayServices.setAdapter(mAdapter);
 
-        bookButton.setOnClickListener((v) -> {
-
-            Dictionary bookingInfo = new Hashtable();
-            bookingInfo.put("name", nameTextView.getText().toString());
-            bookingInfo.put("line1", houseTextView.getText().toString());
-            bookingInfo.put("line2", streetTextView.getText().toString());
-            bookingInfo.put("town", townTextView.getText().toString());
-            bookingInfo.put("postcode", postCodeTextView.getText().toString());
-
-            bookingInfo.put("timeSlot", timeSlotsSpinner.getSelectedItem().toString());
-
-            bookingInfo.put("waterSupply", String.valueOf(waterSwitch.isChecked()));
-            bookingInfo.put("powerSupply", String.valueOf(powerSwitch.isChecked()));
-
-            Toast.makeText(this, "" + bookingInfo, Toast.LENGTH_LONG).show();
-
-        });
+        bookButton.setOnClickListener((v) -> validateForm());
 
         servicesButton.setOnClickListener((v) -> {
 
@@ -107,6 +114,73 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void colourReset(TextView editText) {
+        editText.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                setTextViewColour(editText, Color.GRAY);
+            }
+            return false;
+        });
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                setTextViewColour(editText, Color.GRAY);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private String getText(TextView textView) {
+        return textView.getText().toString();
+    }
+    private String getText(Spinner spinner) {
+        return spinner.getSelectedItem().toString();
+    }
+
+    private void validateForm() {
+
+        formName = getText(nameEditText);
+        formAddressLine1 = getText(houseEditText);
+        formAddressLine2 = getText(streetEditText);
+        formTown = getText(townEditText);
+        formPostcode = getText(townEditText);
+
+        formTimeSlot = getText(timeSlotsSpinner);
+
+        waterSupply = waterSwitch.isChecked();
+        powerSupply = powerSwitch.isChecked();
+
+        if (formComplete()) {
+            //Will move to new activity
+            Toast.makeText(this, "HERE", Toast.LENGTH_LONG).show();
+        } else {
+
+            if (formName.equals("")) setTextViewColour(nameEditText, Color.RED);
+            if (formAddressLine1.equals("")) setTextViewColour(houseEditText, Color.RED);
+            if (formAddressLine2.equals("")) setTextViewColour(streetEditText, Color.RED);
+            if (formTown.equals("")) setTextViewColour(townEditText, Color.RED);
+            if (formPostcode.equals("")) setTextViewColour(postEditText, Color.RED);
+            if (formTimeSlot.equals("Slot")) timeSlotsSpinner.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+            if (selectedServices.isEmpty()) servicesButton.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+
+        }
+    }
+
+    private void setTextViewColour(TextView textView, int colour) {
+        textView.setBackgroundTintList(ColorStateList.valueOf(colour));
+        textView.setHintTextColor(ColorStateList.valueOf(colour));
     }
 
     @Override
@@ -127,6 +201,10 @@ public class DataCollectionActivity extends AppCompatActivity {
                         selectedServicesPrice.add(ServiceDatabase.getServiceTypes().get(id).price);
                     }
 
+                    if(!selectedServices.isEmpty()) {
+                        servicesButton.setBackgroundColor(Color.WHITE);
+                    }
+
                     mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
                     displayServices.setAdapter(mAdapter);
 
@@ -137,4 +215,9 @@ public class DataCollectionActivity extends AppCompatActivity {
             }
         }
     }
+
+    private boolean formComplete() {
+        return !(formName.equals("") || formAddressLine1.equals("") || formAddressLine2.equals("") || formTown.equals("") || formPostcode.equals("") || formTimeSlot.equals("Slot"));
+    }
+
 }
