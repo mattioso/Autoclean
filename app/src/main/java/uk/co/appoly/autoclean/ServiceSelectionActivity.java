@@ -13,8 +13,6 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.security.AccessController.getContext;
-
 public class ServiceSelectionActivity extends AppCompatActivity implements ServicesRecyclerViewAdapter.ItemClickListener{
 
     private RecyclerView recyclerView;
@@ -25,7 +23,7 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
     public static String SERVICE_BUNDLE = "SERVICE_BUNDLE";
     public static String SERVICES = "SERVICES";
 
-    public ArrayList<Integer> returningServices = new ArrayList<>();
+    public ArrayList<Integer> returningServices;
 
     private Button returnButton;
 
@@ -35,13 +33,16 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_selection);
 
+        Bundle bundle = getIntent().getExtras();
+        returningServices = bundle.getIntegerArrayList(SERVICES);
+
         recyclerView = findViewById(R.id.servicesView);
         recyclerView.hasFixedSize();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         serviceTypes = ServiceDatabase.getServiceTypes();
-        mAdapter = new ServicesRecyclerViewAdapter(getApplicationContext(), serviceTypes);
+        mAdapter = new ServicesRecyclerViewAdapter(getApplicationContext(), serviceTypes, returningServices);
 
         mAdapter.setClickListener(this);
         recyclerView.setAdapter(mAdapter);
@@ -70,7 +71,5 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
         } else {
             returningServices.remove(returningServices.indexOf(serviceTypes.get(position).id));
         }
-
-        Log.v("Debug", returningServices.toString());
     }
 }

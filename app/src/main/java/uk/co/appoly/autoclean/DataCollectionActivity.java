@@ -15,8 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 public class DataCollectionActivity extends AppCompatActivity {
 
@@ -35,6 +38,7 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private Button bookButton;
     private Button servicesButton;
+    public ArrayList<Integer> selectedServices = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,6 @@ public class DataCollectionActivity extends AppCompatActivity {
             bookingInfo.put("waterSupply", String.valueOf(waterSwitch.isChecked()));
             bookingInfo.put("powerSupply", String.valueOf(powerSwitch.isChecked()));
 
-
             Toast.makeText(this, "" + bookingInfo, Toast.LENGTH_LONG).show();
 
         });
@@ -87,6 +90,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         servicesButton.setOnClickListener((v) -> {
 
             Intent taskIntent = new Intent(this, ServiceSelectionActivity.class);
+            taskIntent.putIntegerArrayListExtra(ServiceSelectionActivity.SERVICES, selectedServices);
             startActivityForResult(taskIntent, GET_SERVICE_REQUEST);
 
         });
@@ -103,9 +107,11 @@ public class DataCollectionActivity extends AppCompatActivity {
 
                     if (returnedServices == null) return;
 
-                    for (int s : returnedServices) {
-                        Log.v("Debug Test", "ID: " + s);
-                    }
+                    selectedServices = returnedServices;
+
+                    Collections.sort(selectedServices);
+                    Log.v("Debug", selectedServices.toString());
+
                 } catch (NullPointerException e) {
                     Log.v("Debug", "No services returned");
                 }

@@ -15,15 +15,17 @@ import java.util.List;
 
 public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRecyclerViewAdapter.ViewHolder> {
     private LayoutInflater mInflater;
-    private List<ServiceModel> mServiceTypes;
+    public List<ServiceModel> mServiceTypes;
+    public List<Integer> selectedServiceTypes;
     private Context mContext;
 
     ItemClickListener clickListener;
 
-    public ServicesRecyclerViewAdapter(Context context, List<ServiceModel> serviceTypes) {
+    public ServicesRecyclerViewAdapter(Context context, List<ServiceModel> serviceTypes, List<Integer> selectedServiceTypes) {
         this.mInflater = LayoutInflater.from(context);
         this.mServiceTypes = serviceTypes;
         this.mContext = context;
+        this.selectedServiceTypes = selectedServiceTypes;
     }
 
     @NonNull
@@ -39,10 +41,15 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
         holder.myTime.setText(mServiceTypes.get(position).time);
         holder.myPrice.setText("£" + String.valueOf(mServiceTypes.get(position).price));
         holder.myImageView.setImageResource(mServiceTypes.get(position).imageResource);
-        if(mServiceTypes.get(position).pressed) {
-            holder.itemView.setBackgroundColor(Color.GREEN);
-        }
 
+        int thisID = mServiceTypes.get(position).id;
+
+        for (Integer selected: selectedServiceTypes) {
+            if (selected == thisID) {
+                holder.isSelected = true;
+                holder.itemView.setBackgroundColor(Color.GREEN);
+            }
+        }
     }
 
     @Override
@@ -60,8 +67,6 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
         public ViewHolder(View itemView, Context mContext) {
             super(itemView);
             itemView.setOnClickListener(this);
-
-
 
             myImageView = itemView.findViewById(R.id.imageView);
             myTitle = itemView.findViewById(R.id.title);

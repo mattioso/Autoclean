@@ -8,7 +8,6 @@ public class ServiceModel {
     public String description;
     public int imageResource;
     public String time;
-    public Boolean pressed = false;
 
 
     public ServiceModel(int id, String title, int price, String description, int imageURL, String time) {
