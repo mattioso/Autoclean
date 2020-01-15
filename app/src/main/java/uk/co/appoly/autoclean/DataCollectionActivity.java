@@ -80,12 +80,6 @@ public class DataCollectionActivity extends AppCompatActivity {
         townEditText = findViewById(R.id.townEditText);
         postEditText = findViewById(R.id.postcodeEditText);
 
-        colourReset(nameEditText);
-        colourReset(houseEditText);
-        colourReset(streetEditText);
-        colourReset(townEditText);
-        colourReset(postEditText);
-
         waterSwitch = findViewById(R.id.waterSwitch);
         powerSwitch = findViewById(R.id.powerSwitch);
 
@@ -93,6 +87,21 @@ public class DataCollectionActivity extends AppCompatActivity {
         servicesButton = findViewById(R.id.servicesButton);
 
         displayServices = findViewById(R.id.servicesRecyclerView);
+
+        setGrey(nameEditText);
+        setGrey(houseEditText);
+        setGrey(streetEditText);
+        setGrey(townEditText);
+        setGrey(postEditText);
+        setGrey(timeSlotsSpinner);
+        setGrey(servicesButton);
+
+        colourReset(nameEditText);
+        colourReset(houseEditText);
+        colourReset(streetEditText);
+        colourReset(townEditText);
+        colourReset(postEditText);
+
         displayServices.hasFixedSize();
         displayServices.setLayoutManager(new LinearLayoutManager(this) {
             @Override
@@ -114,16 +123,11 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         });
 
+        
+
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void colourReset(TextView editText) {
-        editText.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                setTextViewColour(editText, Color.GRAY);
-            }
-            return false;
-        });
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -183,6 +187,16 @@ public class DataCollectionActivity extends AppCompatActivity {
         textView.setHintTextColor(ColorStateList.valueOf(colour));
     }
 
+    private void setGrey(TextView textView) {
+        setTextViewColour(textView, Color.LTGRAY);
+    }
+    private void setGrey(Button button) {
+        button.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+    }
+    private void setGrey(Spinner spinner) {
+        spinner.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK) {
@@ -202,7 +216,8 @@ public class DataCollectionActivity extends AppCompatActivity {
                     }
 
                     if(!selectedServices.isEmpty()) {
-                        servicesButton.setBackgroundColor(Color.WHITE);
+                        setGrey(servicesButton);
+                        Log.v("Debug", "HERE");
                     }
 
                     mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
