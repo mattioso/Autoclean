@@ -2,8 +2,9 @@ package uk.co.appoly.autoclean;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.IntArrayEvaluator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,11 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 public class DataCollectionActivity extends AppCompatActivity {
 
@@ -38,7 +37,13 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private Button bookButton;
     private Button servicesButton;
-    public ArrayList<Integer> selectedServices = new ArrayList<>();
+
+    private ArrayList<Integer> selectedServices = new ArrayList<>();
+    private ArrayList<String> selectedServicesTitles = new ArrayList<>();
+    private ArrayList<Integer> selectedServicesPrice = new ArrayList<>();
+
+    private RecyclerView displayServices;
+    private RecyclerView.Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,13 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         bookButton = findViewById(R.id.bookButton);
         servicesButton = findViewById(R.id.servicesButton);
+
+        displayServices = findViewById(R.id.servicesRecyclerView);
+        displayServices.hasFixedSize();
+        displayServices.setLayoutManager(new LinearLayoutManager(this));
+
+        mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
+        displayServices.setAdapter(mAdapter);
 
         bookButton.setOnClickListener((v) -> {
 
@@ -108,9 +120,15 @@ public class DataCollectionActivity extends AppCompatActivity {
                     if (returnedServices == null) return;
 
                     selectedServices = returnedServices;
+                    selectedServicesTitles.clear();
 
-                    Collections.sort(selectedServices);
-                    Log.v("Debug", selectedServices.toString());
+                    for(int id : selectedServices) {
+                        selectedServicesTitles.add(ServiceDatabase.getServiceTypes().get(id).title);
+                        selectedServicesPrice.add(ServiceDatabase.getServiceTypes().get(id).price);
+                    }
+
+                    mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
+                    displayServices.setAdapter(mAdapter);
 
                 } catch (NullPointerException e) {
                     Log.v("Debug", "No services returned");

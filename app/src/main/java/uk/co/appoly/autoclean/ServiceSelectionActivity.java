@@ -42,7 +42,7 @@ public class ServiceSelectionActivity extends AppCompatActivity implements Servi
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         serviceTypes = ServiceDatabase.getServiceTypes();
-        mAdapter = new ServicesRecyclerViewAdapter(getApplicationContext(), serviceTypes, returningServices);
+        mAdapter = new ServicesRecyclerViewAdapter(this, serviceTypes, returningServices);
 
         mAdapter.setClickListener(this);
         recyclerView.setAdapter(mAdapter);

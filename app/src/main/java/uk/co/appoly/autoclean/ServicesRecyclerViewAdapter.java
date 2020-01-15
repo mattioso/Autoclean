@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRecyclerViewAdapter.ViewHolder> {
@@ -94,4 +95,5 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
     public void setClickListener(ItemClickListener listener) {
         this.clickListener = listener;
     }
+
 }
