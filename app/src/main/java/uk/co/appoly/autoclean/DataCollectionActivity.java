@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -13,9 +12,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -27,7 +28,8 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private final int GET_SERVICE_REQUEST = 5000;
 
-    private Spinner timeSlotsSpinner;
+    private TextView dateTextView;
+    private TextView combinedPriceTextView;
 
     private TextView nameEditText;
     private TextView houseEditText;
@@ -37,6 +39,8 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private Switch waterSwitch;
     private Switch powerSwitch;
+
+    private Spinner timeSlotsSpinner;
 
     private Button bookButton;
     private Button servicesButton;
@@ -57,28 +61,35 @@ public class DataCollectionActivity extends AppCompatActivity {
     private Boolean waterSupply;
     private Boolean powerSupply;
 
+    private String date;
+    private int combinedPrice;
+
+    private int day;
+    private int month;
+    private int year;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_collection);
 
         Bundle bundle = getIntent().getExtras();
-        int day = bundle.getInt(Constants.INTENT_DAY);
-        int month = bundle.getInt(Constants.INTENT_MONTH);
-        int year = bundle.getInt(Constants.INTENT_YEAR);
+        day = bundle.getInt(Constants.INTENT_DAY);
+        month = bundle.getInt(Constants.INTENT_MONTH);
+        year = bundle.getInt(Constants.INTENT_YEAR);
 
-        timeSlotsSpinner = findViewById(R.id.spinner1);
+        date = "Selected date: " + dateConverter(day) + "/" + dateConverter(month) + "/" + year;
 
-        String[] timeSlots = new String[]{"Slot", "8am", "10am", "12am", "2am", "4am"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, timeSlots);
-        timeSlotsSpinner.setAdapter(adapter);
+        dateTextView = findViewById(R.id.dateTextView);
+        combinedPriceTextView = findViewById(R.id.combinedPriceTextView);
 
         nameEditText = findViewById(R.id.nameEditText);
         houseEditText = findViewById(R.id.addressOneEditText);
         streetEditText = findViewById(R.id.addressTwoEditText);
         townEditText = findViewById(R.id.townEditText);
         postEditText = findViewById(R.id.postcodeEditText);
+
+        timeSlotsSpinner = findViewById(R.id.spinner1);
 
         waterSwitch = findViewById(R.id.waterSwitch);
         powerSwitch = findViewById(R.id.powerSwitch);
@@ -88,19 +99,29 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         displayServices = findViewById(R.id.servicesRecyclerView);
 
-        setGrey(nameEditText);
-        setGrey(houseEditText);
-        setGrey(streetEditText);
-        setGrey(townEditText);
-        setGrey(postEditText);
-        setGrey(timeSlotsSpinner);
-        setGrey(servicesButton);
+        dateTextView.setText(date);
 
-        colourReset(nameEditText);
-        colourReset(houseEditText);
-        colourReset(streetEditText);
-        colourReset(townEditText);
-        colourReset(postEditText);
+        String[] timeSlots = new String[]{"Slot", "8am", "10am", "12pm", "2pm", "4pm"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, timeSlots);
+        timeSlotsSpinner.setAdapter(adapter);
+
+        setColour(nameEditText, Color.LTGRAY);
+        setColour(houseEditText, Color.LTGRAY);
+        setColour(streetEditText, Color.LTGRAY);
+        setColour(townEditText, Color.LTGRAY);
+        setColour(postEditText, Color.LTGRAY);
+        setColour(timeSlotsSpinner, Color.LTGRAY);
+        setColour(servicesButton, Color.LTGRAY);
+        setColour(waterSwitch, Color.BLACK, Color.RED);
+        setColour(powerSwitch, Color.BLACK, Color.RED);
+
+        setPressListener(nameEditText);
+        setPressListener(houseEditText);
+        setPressListener(streetEditText);
+        setPressListener(townEditText);
+        setPressListener(postEditText);
+        setPressListener(waterSwitch);
+        setPressListener(powerSwitch);
 
         displayServices.hasFixedSize();
         displayServices.setLayoutManager(new LinearLayoutManager(this) {
@@ -113,7 +134,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
         displayServices.setAdapter(mAdapter);
 
-        bookButton.setOnClickListener((v) -> validateForm());
+        bookButton.setOnClickListener((v) -> moveActivity());
 
         servicesButton.setOnClickListener((v) -> {
 
@@ -123,25 +144,44 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         });
 
-        
+        timeSlotsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                setColour(timeSlotsSpinner, Color.LTGRAY);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+        });
+        
     }
 
-    private void colourReset(TextView editText) {
+    private void setPressListener(TextView editText) {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                setTextViewColour(editText, Color.GRAY);
+                setColour(editText, Color.LTGRAY);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+    }
 
+    private void setPressListener(Switch givenSwitch) {
+        givenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) setColour(givenSwitch, Color.BLACK, Color.BLUE);
+                else setColour(givenSwitch, Color.RED, Color.RED);
             }
         });
     }
@@ -153,7 +193,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         return spinner.getSelectedItem().toString();
     }
 
-    private void validateForm() {
+    private void moveActivity() {
 
         formName = getText(nameEditText);
         formAddressLine1 = getText(houseEditText);
@@ -168,33 +208,52 @@ public class DataCollectionActivity extends AppCompatActivity {
 
         if (formComplete()) {
             //Will move to new activity
-            Toast.makeText(this, "HERE", Toast.LENGTH_LONG).show();
-        } else {
 
-            if (formName.equals("")) setTextViewColour(nameEditText, Color.RED);
-            if (formAddressLine1.equals("")) setTextViewColour(houseEditText, Color.RED);
-            if (formAddressLine2.equals("")) setTextViewColour(streetEditText, Color.RED);
-            if (formTown.equals("")) setTextViewColour(townEditText, Color.RED);
-            if (formPostcode.equals("")) setTextViewColour(postEditText, Color.RED);
+            Intent intent = new Intent(this, BookingConfirmActivity.class);
+            intent.putExtra("day", day);
+            intent.putExtra("month", month);
+            intent.putExtra("year", year);
+            intent.putExtra("name", formName);
+            intent.putExtra("addressLine1", formAddressLine1);
+            intent.putExtra("addressLine2", formAddressLine2);
+            intent.putExtra("town", formTown);
+            intent.putExtra("postcode", formPostcode);
+            intent.putExtra("timeSlot", formTimeSlot);
+            intent.putExtra("services", selectedServices);
+            intent.putExtra("waterSupply", waterSupply);
+            intent.putExtra("powerSupply", powerSupply);
+            startActivity(intent);
+
+
+        } else {
+            if (formName.equals("")) setColour(nameEditText, Color.RED);
+            if (formAddressLine1.equals("")) setColour(houseEditText, Color.RED);
+            if (formAddressLine2.equals("")) setColour(streetEditText, Color.RED);
+            if (formTown.equals("")) setColour(townEditText, Color.RED);
+            if (formPostcode.equals("")) setColour(postEditText, Color.RED);
             if (formTimeSlot.equals("Slot")) timeSlotsSpinner.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             if (selectedServices.isEmpty()) servicesButton.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-
+            if (!waterSupply) setColour(waterSwitch, Color.RED, Color.RED);
+            if (!powerSupply) setColour(powerSwitch, Color.RED, Color.RED);
         }
     }
 
-    private void setTextViewColour(TextView textView, int colour) {
+    private void setColour(TextView textView, int colour) {
         textView.setBackgroundTintList(ColorStateList.valueOf(colour));
         textView.setHintTextColor(ColorStateList.valueOf(colour));
     }
 
-    private void setGrey(TextView textView) {
-        setTextViewColour(textView, Color.LTGRAY);
+    private void setColour(Switch changeSwitch, int colour, int switchColour) {
+        changeSwitch.setTextColor(colour);
+        changeSwitch.setThumbTintList(ColorStateList.valueOf(switchColour));
     }
-    private void setGrey(Button button) {
-        button.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+
+    private void setColour(Button button, int colour) {
+        button.setBackgroundTintList(ColorStateList.valueOf(colour));
     }
-    private void setGrey(Spinner spinner) {
-        spinner.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+
+    private void setColour(Spinner spinner, int colour) {
+        spinner.setBackgroundTintList(ColorStateList.valueOf(colour));
     }
 
     @Override
@@ -208,16 +267,24 @@ public class DataCollectionActivity extends AppCompatActivity {
                     if (returnedServices == null) return;
 
                     selectedServices = returnedServices;
+                    combinedPrice = 0;
                     selectedServicesTitles.clear();
 
                     for(int id : selectedServices) {
                         selectedServicesTitles.add(ServiceDatabase.getServiceTypes().get(id).title);
                         selectedServicesPrice.add(ServiceDatabase.getServiceTypes().get(id).price);
+                        combinedPrice += ServiceDatabase.getServiceTypes().get(id).price;
+                    }
+
+                    if(selectedServices.size() > 1) {
+                        combinedPriceTextView.setVisibility(View.VISIBLE);
+                        combinedPriceTextView.setText("Total: £ " + combinedPrice);
+                    } else {
+                        combinedPriceTextView.setVisibility(View.GONE);
                     }
 
                     if(!selectedServices.isEmpty()) {
-                        setGrey(servicesButton);
-                        Log.v("Debug", "HERE");
+                        setColour(servicesButton, Color.LTGRAY);
                     }
 
                     mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
@@ -233,6 +300,11 @@ public class DataCollectionActivity extends AppCompatActivity {
 
     private boolean formComplete() {
         return !(formName.equals("") || formAddressLine1.equals("") || formAddressLine2.equals("") || formTown.equals("") || formPostcode.equals("") || formTimeSlot.equals("Slot"));
+    }
+
+    private String dateConverter(int date) {
+        if (date > 9) return Integer.toString(date);
+        return "0" + date;
     }
 
 }
