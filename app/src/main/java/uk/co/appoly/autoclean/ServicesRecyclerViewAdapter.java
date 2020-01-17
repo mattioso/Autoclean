@@ -49,6 +49,8 @@ public class ServicesRecyclerViewAdapter extends RecyclerView.Adapter<ServicesRe
             if (selected == thisID) {
                 holder.isSelected = true;
                 holder.itemView.setBackgroundColor(Color.GREEN);
+            } else {
+                holder.itemView.setBackgroundColor(Color.WHITE);
             }
         }
     }

@@ -20,7 +20,6 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -34,7 +33,7 @@ public class DataCollectionActivity extends AppCompatActivity {
     private TextView nameEditText;
     private TextView houseEditText;
     private TextView streetEditText;
-    private TextView townEditText;
+    private TextView cityEditText;
     private TextView postEditText;
 
     private Switch waterSwitch;
@@ -55,7 +54,7 @@ public class DataCollectionActivity extends AppCompatActivity {
     private String formName;
     private String formAddressLine1;
     private String formAddressLine2;
-    private String formTown;
+    private String formCity;
     private String formPostcode;
     private String formTimeSlot;
     private Boolean waterSupply;
@@ -86,7 +85,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         nameEditText = findViewById(R.id.nameEditText);
         houseEditText = findViewById(R.id.addressOneEditText);
         streetEditText = findViewById(R.id.addressTwoEditText);
-        townEditText = findViewById(R.id.townEditText);
+        cityEditText = findViewById(R.id.cityEditText);
         postEditText = findViewById(R.id.postcodeEditText);
 
         timeSlotsSpinner = findViewById(R.id.spinner1);
@@ -108,7 +107,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         setColour(nameEditText, Color.LTGRAY);
         setColour(houseEditText, Color.LTGRAY);
         setColour(streetEditText, Color.LTGRAY);
-        setColour(townEditText, Color.LTGRAY);
+        setColour(cityEditText, Color.LTGRAY);
         setColour(postEditText, Color.LTGRAY);
         setColour(timeSlotsSpinner, Color.LTGRAY);
         setColour(servicesButton, Color.LTGRAY);
@@ -118,7 +117,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         setPressListener(nameEditText);
         setPressListener(houseEditText);
         setPressListener(streetEditText);
-        setPressListener(townEditText);
+        setPressListener(cityEditText);
         setPressListener(postEditText);
         setPressListener(waterSwitch);
         setPressListener(powerSwitch);
@@ -126,9 +125,7 @@ public class DataCollectionActivity extends AppCompatActivity {
         displayServices.hasFixedSize();
         displayServices.setLayoutManager(new LinearLayoutManager(this) {
             @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
+            public boolean canScrollVertically() {return false;}
         });
 
         mAdapter = new ServicesDisplayAdapter(this, selectedServicesTitles, selectedServicesPrice);
@@ -198,8 +195,8 @@ public class DataCollectionActivity extends AppCompatActivity {
         formName = getText(nameEditText);
         formAddressLine1 = getText(houseEditText);
         formAddressLine2 = getText(streetEditText);
-        formTown = getText(townEditText);
-        formPostcode = getText(townEditText);
+        formCity = getText(cityEditText);
+        formPostcode = getText(postEditText);
 
         formTimeSlot = getText(timeSlotsSpinner);
 
@@ -210,26 +207,25 @@ public class DataCollectionActivity extends AppCompatActivity {
             //Will move to new activity
 
             Intent intent = new Intent(this, BookingConfirmActivity.class);
-            intent.putExtra("day", day);
-            intent.putExtra("month", month);
-            intent.putExtra("year", year);
+            intent.putExtra("date", date);
+            intent.putExtra("price", combinedPrice);
             intent.putExtra("name", formName);
             intent.putExtra("addressLine1", formAddressLine1);
             intent.putExtra("addressLine2", formAddressLine2);
-            intent.putExtra("town", formTown);
+            intent.putExtra("city", formCity);
             intent.putExtra("postcode", formPostcode);
             intent.putExtra("timeSlot", formTimeSlot);
             intent.putExtra("services", selectedServices);
             intent.putExtra("waterSupply", waterSupply);
             intent.putExtra("powerSupply", powerSupply);
+            intent.putExtra("serviceIds", selectedServices);
             startActivity(intent);
 
 
         } else {
             if (formName.equals("")) setColour(nameEditText, Color.RED);
             if (formAddressLine1.equals("")) setColour(houseEditText, Color.RED);
-            if (formAddressLine2.equals("")) setColour(streetEditText, Color.RED);
-            if (formTown.equals("")) setColour(townEditText, Color.RED);
+            if (formCity.equals("")) setColour(cityEditText, Color.RED);
             if (formPostcode.equals("")) setColour(postEditText, Color.RED);
             if (formTimeSlot.equals("Slot")) timeSlotsSpinner.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
             if (selectedServices.isEmpty()) servicesButton.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
@@ -278,7 +274,7 @@ public class DataCollectionActivity extends AppCompatActivity {
 
                     if(selectedServices.size() > 1) {
                         combinedPriceTextView.setVisibility(View.VISIBLE);
-                        combinedPriceTextView.setText("Total: £ " + combinedPrice);
+                        combinedPriceTextView.setText("Total: £" + combinedPrice);
                     } else {
                         combinedPriceTextView.setVisibility(View.GONE);
                     }
@@ -299,7 +295,7 @@ public class DataCollectionActivity extends AppCompatActivity {
     }
 
     private boolean formComplete() {
-        return !(formName.equals("") || formAddressLine1.equals("") || formAddressLine2.equals("") || formTown.equals("") || formPostcode.equals("") || formTimeSlot.equals("Slot"));
+        return !(formName.equals("") || formAddressLine1.equals("") || formCity.equals("") || formPostcode.equals("") || formTimeSlot.equals("Slot"));
     }
 
     private String dateConverter(int date) {
